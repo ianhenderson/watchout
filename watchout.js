@@ -34,11 +34,32 @@ var createAxis = {
   x: d3.svg.axis().scale(axes.x),
   y: d3.svg.axis().scale(axes.y)
 };
+
+var collisionCheck = function(){
+  var px = d3.select(".player").attr("cx");
+  var py = d3.select(".player").attr("cy");
+  var r = d3.select(".player").attr("r");
+
+  d3.selectAll(".enemy").each(function(x){
+    var dx = x[0] - px;
+    var dy = x[0] - py;
+    var dr = 2*r; // Need to be changed to include enemy value.
+    var distance = Math.sqrt( Math.pow(dx,2) + Math.pow(dy,2) );
+    if ( distance < dr ){
+      var collisions = Number(d3.select(".collisions").select("span").text());
+      collisions++;
+      d3.select(".collisions").select("span").text(collisions);
+    }
+  });
+};
+
+
 // Define drag beavior
 var dragmove = function (d) {
   var x = d3.event.x;
   var y = d3.event.y;
   d3.select(this).attr('cx', x).attr('cy',y);
+  collisionCheck();
 };
 
 var drag = d3.behavior.drag()
@@ -53,6 +74,7 @@ board.append("circle")
   .attr("cx", (boardData.width/2))
   .attr("cy", (boardData.height/2))
   .call(drag);
+
 
 
 var update = function(positions){
