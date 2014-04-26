@@ -11,12 +11,18 @@ var boardData = {
   collisions: 0
 };
 
+var board = d3.select("body").append("svg").append('g');
+
 var updateWindowData = function(){
+  boardData.enemySize = ((window.innerWidth * window.innerHeight) * .00001);
+  boardData.playerSize = ((window.innerWidth * window.innerHeight) * .00001);
   boardData.width = window.innerWidth;
   boardData.height = window.innerHeight;
+  d3.select('g').attr("width", boardData.width)
+                .attr("height", boardData.height);
 };
 
-d3.select(".collisions").select("span").text()
+d3.select(".collisions").select("span").text();
 
 
 
@@ -31,10 +37,10 @@ var randPosition = function(){
 };
 var positions = randPosition();
 //viewport selection
-var board = d3.select("body").append("svg")
-                .attr("width", boardData.width)
-                .attr("height", boardData.height)
-                .append("g");
+// var board = d3.select("body").append("svg")
+                // .attr("width", boardData.width)
+                // .attr("height", boardData.height)
+//                 .append("g");
 //scale for axis
 var axes = {
   x: d3.scale.linear().domain([0,100]).range([0, board.width]),
@@ -99,11 +105,14 @@ board.append("circle")
 var update = function(positions){
   updateWindowData();
 
+  d3.select('.player').transition().attr('r', boardData.playerSize);
+
   d3.selectAll(".enemy").data(positions)
          .transition()
          .duration(function(d){return d[2];})
          .attr("cx", function(d){ return d[0];})
-         .attr("cy", function(d){ return d[1];});
+         .attr("cy", function(d){ return d[1];})
+         .attr("r", boardData.enemySize);
 
   board.selectAll("circle").data(positions).enter().append('circle')
          .transition()
