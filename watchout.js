@@ -34,24 +34,42 @@ var createAxis = {
   x: d3.svg.axis().scale(axes.x),
   y: d3.svg.axis().scale(axes.y)
 };
+// Define drag beavior
+var dragmove = function (d) {
+  var x = d3.event.x;
+  var y = d3.event.y;
+  d3.select(this).attr('cx', x).attr('cy',y);
+};
+
+var drag = d3.behavior.drag()
+    .on("drag", dragmove);
+
+
+//player
+board.append("circle")
+  .style("fill", "blue")
+  .attr("class", "player")
+  .attr("r", 25)
+  .attr("cx", (boardData.width/2))
+  .attr("cy", (boardData.height/2))
+  .call(drag);
+
 
 var update = function(positions){
-  var enemies = board.selectAll("circle").data(positions);
-  enemies
+  d3.selectAll(".enemy").data(positions)
          .transition()
          .duration(750)
          .attr("cx", function(d){ return d[0];})
-         .attr("cy", function(d){ return d[1];})
-         .attr("r", 25)
-         .style("fill", "pink");
+         .attr("cy", function(d){ return d[1];});
 
-  enemies.enter().append('circle')
+  board.selectAll("circle").data(positions).enter().append('circle')
          .transition()
          .duration(750)
          .attr("cx", function(d){ return d[0];})
          .attr("cy", function(d){ return d[1];})
          .attr("r", 25)
-         .style("fill", "pink");
+         .style("fill", "pink")
+         .attr("class", "enemy");
 };
 update(randPosition());
 setInterval(function () {update(randPosition());}, 1500);
