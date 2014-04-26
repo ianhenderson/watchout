@@ -1,12 +1,19 @@
 // start slingin' some d3 here.
 
 var boardData = {
-  width: 750,
-  height: 750,
-  numEnemies: 30,
+  width: window.innerWidth,
+  height: window.innerHeight,
+  enemySize: ((window.innerWidth * window.innerHeight) * .00001),
+  playerSize: ((window.innerWidth * window.innerHeight) * .00001),
+  numEnemies: 50,
   high: 0,
   current: 0,
   collisions: 0
+};
+
+var updateWindowData = function(){
+  boardData.width = window.innerWidth;
+  boardData.height = window.innerHeight;
 };
 
 d3.select(".collisions").select("span").text()
@@ -25,8 +32,8 @@ var randPosition = function(){
 var positions = randPosition();
 //viewport selection
 var board = d3.select("body").append("svg")
-                .attr("width", 750)
-                .attr("height", 750)
+                .attr("width", boardData.width)
+                .attr("height", boardData.height)
                 .append("g");
 //scale for axis
 var axes = {
@@ -46,18 +53,18 @@ var collisionCheck = function(){
   var r = d3.select(".player").attr("r");
 
   d3.selectAll(".enemy").each(function(x){
-    d3.select(".collisions").select("span").text(boardData.collisions);
-    d3.select(".current").select("span").text(boardData.current);
-    d3.select(".high").select("span").text(boardData.high);
+    d3.select(".collisions").select("span").text(Math.floor(boardData.collisions));
+    d3.select(".current").select("span").text(Math.floor(boardData.current));
+    d3.select(".high").select("span").text(Math.floor(boardData.high));
     var dx = x[0] - px;
-    var dy = x[0] - py;
+    var dy = x[1] - py;
     var dr = 2*r; // Need to be changed to include enemy value.
     var distance = Math.sqrt( Math.pow(dx,2) + Math.pow(dy,2) );
     if ( distance < dr ){
-      boardData.collisions++;
+      boardData.collisions = boardData.collisions + 0.1;
       boardData.current = 0;
     } else {
-      boardData.current++;
+      boardData.current = boardData.current + 0.01;
       if (boardData.current > boardData.high) {
         boardData.high = boardData.current;
       }
@@ -82,7 +89,7 @@ var drag = d3.behavior.drag()
 board.append("circle")
   .style("fill", "blue")
   .attr("class", "player")
-  .attr("r", 25)
+  .attr("r", boardData.playerSize)
   .attr("cx", (boardData.width/2))
   .attr("cy", (boardData.height/2))
   .call(drag);
@@ -90,6 +97,8 @@ board.append("circle")
 
 
 var update = function(positions){
+  updateWindowData();
+
   d3.selectAll(".enemy").data(positions)
          .transition()
          .duration(750)
@@ -101,7 +110,7 @@ var update = function(positions){
          .duration(750)
          .attr("cx", function(d){ return d[0];})
          .attr("cy", function(d){ return d[1];})
-         .attr("r", 25)
+         .attr("r", boardData.enemySize)
          .style("fill", "pink")
          .attr("class", "enemy");
 };
