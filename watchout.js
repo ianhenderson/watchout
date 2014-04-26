@@ -3,7 +3,7 @@
 var boardData = {
   width: 750,
   height: 750,
-  numEnemies: 5
+  numEnemies: 30
 };
 
 
@@ -35,26 +35,11 @@ var createAxis = {
   y: d3.svg.axis().scale(axes.y)
 };
 
-// var enemies = d3.select("svg").selectAll("circle").data(positions, function (d) {return d;});
-
-// d3.select("svg").selectAll("circle")
-
-
-
-// enemies.enter().append("circle")
-//        .attr("cx", function(d){ return d[0];})
-//        .attr("cy", function(d){ return d[1];})
-//        .attr("r", 25)
-//        .style("fill", "pink");
-
 var update = function(positions){
-  console.log(positions);
-  //data join
-  // var enemies = d3.select("svg").selectAll("circle").data(positions, function (d) {return d;});
-  var enemies = board.selectAll("circle").data(positions, function (d) {return d;});
-
-  // debugger;
+  var enemies = board.selectAll("circle").data(positions);
   enemies
+         .transition()
+         .duration(750)
          .attr("cx", function(d){ return d[0];})
          .attr("cy", function(d){ return d[1];})
          .attr("r", 25)
@@ -67,12 +52,8 @@ var update = function(positions){
          .attr("cy", function(d){ return d[1];})
          .attr("r", 25)
          .style("fill", "pink");
-
- enemies.exit()
-        .remove();
-
 };
-
+update(randPosition());
 setInterval(function () {update(randPosition());}, 1500);
 
 
