@@ -3,8 +3,13 @@
 var boardData = {
   width: 750,
   height: 750,
-  numEnemies: 30
+  numEnemies: 30,
+  high: 0,
+  current: 0,
+  collisions: 0
 };
+
+d3.select(".collisions").select("span").text()
 
 
 
@@ -41,14 +46,21 @@ var collisionCheck = function(){
   var r = d3.select(".player").attr("r");
 
   d3.selectAll(".enemy").each(function(x){
+    d3.select(".collisions").select("span").text(boardData.collisions);
+    d3.select(".current").select("span").text(boardData.current);
+    d3.select(".high").select("span").text(boardData.high);
     var dx = x[0] - px;
     var dy = x[0] - py;
     var dr = 2*r; // Need to be changed to include enemy value.
     var distance = Math.sqrt( Math.pow(dx,2) + Math.pow(dy,2) );
     if ( distance < dr ){
-      var collisions = Number(d3.select(".collisions").select("span").text());
-      collisions++;
-      d3.select(".collisions").select("span").text(collisions);
+      boardData.collisions++;
+      boardData.current = 0;
+    } else {
+      boardData.current++;
+      if (boardData.current > boardData.high) {
+        boardData.high = boardData.current;
+      }
     }
   });
 };
