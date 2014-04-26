@@ -24,8 +24,8 @@ d3.select(".collisions").select("span").text()
 var randPosition = function(){
   var positions = [];
   for (var i = 0; i < boardData.numEnemies; i++){
-    var tuple = [(Math.random() * boardData.width), (Math.random() * boardData.height)];
-    positions.push(tuple);
+    var triplet = [(Math.random() * boardData.width), (Math.random() * boardData.height), ((Math.random() * 1200) + 200)];
+    positions.push(triplet);
   }
   return positions;
 };
@@ -101,13 +101,13 @@ var update = function(positions){
 
   d3.selectAll(".enemy").data(positions)
          .transition()
-         .duration(750)
+         .duration(function(d){return d[2];})
          .attr("cx", function(d){ return d[0];})
          .attr("cy", function(d){ return d[1];});
 
   board.selectAll("circle").data(positions).enter().append('circle')
          .transition()
-         .duration(750)
+         .duration(function(d){return d[2];})
          .attr("cx", function(d){ return d[0];})
          .attr("cy", function(d){ return d[1];})
          .attr("r", boardData.enemySize)
